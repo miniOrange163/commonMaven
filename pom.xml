@@ -1,0 +1,113 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>commonMaven</groupId>
+  <artifactId>commonMaven</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  
+  
+  <dependencies>
+    <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.5</version>
+    </dependency>
+  	
+  	<!-- ant包	可压缩文件成zip包 -->
+    <dependency> 
+			<groupId>org.apache.ant</groupId> 
+			<artifactId>ant</artifactId> 
+			<version>1.9.7</version> 
+	</dependency>
+  	<!-- cglib包		用于动态生成对象 -->
+  	<dependency>
+	    <groupId>cglib</groupId>
+	    <artifactId>cglib</artifactId>
+	    <version>2.2.2</version>
+	</dependency>
+    <!-- log4j包		用于保存日志 -->
+    <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.15</version>
+    </dependency>
+    <!-- xstream包		用于解析xml文件 -->
+    <dependency>
+	    <groupId>com.thoughtworks.xstream</groupId>
+	    <artifactId>xstream</artifactId>
+	    <version>1.4.9</version>
+	</dependency>
+    <!-- javadbf包		用于解析DBF文件 -->
+    <dependency>
+	    <groupId>com.linuxense</groupId>
+	    <artifactId>javadbf</artifactId>
+	    <version>0.4.0</version>
+	</dependency>
+  	<!-- jsoup包		用于解析html文件 	比较好用 -->
+	<dependency>
+	    <groupId>org.jsoup</groupId>
+	    <artifactId>jsoup</artifactId>
+	    <version>1.10.2</version>
+	</dependency>
+	<!-- htmlparser		用于解析html文件2 -->
+    <dependency>
+	    <groupId>org.htmlparser</groupId>
+	    <artifactId>htmlparser</artifactId>
+	    <version>1.6</version>
+	</dependency>
+    <!-- jxl包 	用于解析*.xls文件 -->
+    <dependency>
+	    <groupId>jexcelapi</groupId>
+	    <artifactId>jxl</artifactId>
+	    <version>2.4.2</version>
+	</dependency>
+	<!-- poi包 	用于解析*.xls文件 	比较全面-->
+  	<dependency>
+         <groupId>org.apache.poi</groupId>
+         <artifactId>poi-ooxml</artifactId>
+         <version>3.8</version>
+     </dependency>
+     <dependency>      
+	    <groupId>net.sf.json-lib</groupId>     
+	    <artifactId>json-lib</artifactId>      
+	    <version>2.3</version>    
+	    <classifier>jdk15</classifier>  
+	 </dependency>
+	 <!--jackson相关依赖 -->
+	<dependency>
+		<groupId>com.fasterxml.jackson.core</groupId>
+		<artifactId>jackson-databind</artifactId>
+		<version>2.6.7</version>
+	</dependency>
+	 <!--soapui相关依赖 -->
+     <dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.2</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.github.redfish4ktc.soapui</groupId>
+		    <artifactId>soapui</artifactId>
+		    <version>4.0.1.0</version>
+		</dependency>
+		
+	<!-- ftp -->
+	<dependency>
+           <groupId>org.apache.camel</groupId>
+           <artifactId>camel-ftp</artifactId>
+           <version>2.13.2</version>
+       </dependency>
+  </dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.6.0</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

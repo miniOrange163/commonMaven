@@ -1,0 +1,14 @@
+eclipse.preferences.version=1
+encoding//src/main/java/priv/linjb/common/logic/Huffman/Data.java=UTF-8
+encoding//src/main/java/priv/linjb/common/logic/Huffman/EncodeResult.java=UTF-8
+encoding//src/main/java/priv/linjb/common/logic/Huffman/HuffmanAlgorithm.java=UTF-8
+encoding//src/main/java/priv/linjb/common/logic/Huffman/HuffmanAlgorithmAbstract.java=UTF-8
+encoding//src/main/java/priv/linjb/common/logic/Huffman/HuffmanAlgorithmImpl1.java=UTF-8
+encoding//src/main/java/priv/linjb/common/logic/Huffman/HuffmanAlgorithmImpl1Test.java=UTF-8
+encoding//src/main/java/priv/linjb/common/logic/Huffman/Node.java=UTF-8
+encoding//src/main/java/priv/linjb/common/logic/regex/Test.java=UTF-8
+encoding//src/main/java/priv/linjb/common/parse/excel/Jxl.java=UTF-8
+encoding//src/main/java/priv/linjb/learn/StringBuffer/StringBufferAndStringBuilderTest.java=UTF-8
+encoding//src/main/java/priv/linjb/learn/StringBuffer/StringBufferTaskThread.java=UTF-8
+encoding//src/main/java/priv/linjb/learn/lambda/FirstTest.java=UTF-8
+encoding//src/main/java/priv/linjb/learn/lambda/SecondTest.java=UTF-8
