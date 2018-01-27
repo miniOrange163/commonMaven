@@ -1,6 +1,6 @@
 package priv.linjb.learn.number;
 
-import priv.linjb.learn.lambda.User;
+import priv.linjb.entity.User;
 
 public class TempTest {
 

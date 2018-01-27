@@ -1,5 +1,6 @@
 package priv.linjb.learn.lambda;
 
+import priv.linjb.entity.User;
 import priv.linjb.learn.lambda.util.MyCollectors;
 
 import java.util.HashMap;

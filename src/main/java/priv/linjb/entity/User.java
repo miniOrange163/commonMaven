@@ -1,4 +1,4 @@
-package priv.linjb.learn.lambda;
+package priv.linjb.entity;
 
 public class User {
 

@@ -1,5 +1,7 @@
 package priv.linjb.learn.lambda;
 
+import priv.linjb.entity.User;
+
 import java.util.ArrayList;
 import java.util.List;
 
