@@ -246,8 +246,9 @@ public class HttpTest {
 		long start = new Date().getTime();
 		
 
-		//faceFeature();
-		facePosition();
+		faceFeature();
+		//facePosition();
+
 		//queryUpdateConfig();
 		//updateConfig();
 		//verifyImage();
