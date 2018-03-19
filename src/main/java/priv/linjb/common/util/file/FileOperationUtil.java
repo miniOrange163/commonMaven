@@ -1,15 +1,16 @@
 package priv.linjb.common.util.file;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 /**
  * 文件操作工具类
  * @author Linjb
@@ -24,11 +25,29 @@ import org.apache.http.impl.client.HttpClients;
  * 8.	writeFile(String catalog,String name,String content)						写入字符串到文件
  * 9.	writeFile(String catalog,String name,String content,String charset)			以指定字符编码写入字符串到文件
  * 10.	writeFileBuffer(String catalog,String name,String content,String charset)	以指定字符编码用字符流写入字符串到文件
+ * 11.	writeFile(String catalog,String name,byte[] fileByte)					字节转文件
+ * 12.  download(String url,String path)											从网络地址的url下载文件到指定路径
+ * 13.  downloadToByte(String url)													从网络地址的url下载文件转到byte
+ * 14.	readFile(String filePath)													读取文本文件内容
  *
  */
 public class FileOperationUtil {
-	
-	
+
+
+	public static byte[] downloadToByte(String url) throws IOException {
+
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		HttpGet httpget = new HttpGet(url);
+		HttpResponse response = httpclient.execute(httpget);
+		HttpEntity entity = response.getEntity();
+		InputStream in = entity.getContent();
+		byte[] byt = new byte[in.available()];
+
+		in.read(byt);
+
+		return byt;
+	}
+
 	/**
 	 * 从远程服务器拷贝到本地文件
 	 * @param url	源文件url地址
@@ -36,34 +55,33 @@ public class FileOperationUtil {
 	 * @return
 	 */
 	public static boolean download(String url,String path) throws ClientProtocolException, IOException{
-			
-			CloseableHttpClient httpclient = HttpClients.createDefault();  
-	        HttpGet httpget = new HttpGet(url);  
-	        HttpResponse response = httpclient.execute(httpget);  
-	        HttpEntity entity = response.getEntity();  
-	        InputStream in = entity.getContent();  
-	        File file = new File(path);  
-	        if(file.exists()){
-	        	file.delete();
-	        }
-	        try {  
-	            FileOutputStream fout = new FileOutputStream(file);  
-	            int l = -1;  
-	            byte[] tmp = new byte[1024];  
-	            while ((l = in.read(tmp)) != -1) {  
-	                fout.write(tmp, 0, l);  
-	                // 注意这里如果用OutputStream.write(buff)的话，图片会失真，大家可以试试  
-	            }  
-	            fout.flush();  
-	            fout.close();  
-	        } finally {  
-	            // 关闭低层流。  
-	            in.close();  
-	        }  
-	        httpclient.close();  
-	        return true;
-	}
 
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		HttpGet httpget = new HttpGet(url);
+		HttpResponse response = httpclient.execute(httpget);
+		HttpEntity entity = response.getEntity();
+		InputStream in = entity.getContent();
+		File file = new File(path);
+		if(file.exists()){
+			file.delete();
+		}
+		try {
+			FileOutputStream fout = new FileOutputStream(file);
+			int l = -1;
+			byte[] tmp = new byte[1024];
+			while ((l = in.read(tmp)) != -1) {
+				fout.write(tmp, 0, l);
+				// 注意这里如果用OutputStream.write(buff)的话，图片会失真，大家可以试试
+			}
+			fout.flush();
+			fout.close();
+		} finally {
+			// 关闭低层流。
+			in.close();
+		}
+		httpclient.close();
+		return true;
+	}
 	/**
 	 * 从远程服务器拷贝到本地文件
 	 * @param url	源文件url地址
@@ -71,38 +89,38 @@ public class FileOperationUtil {
 	 * @return
 	 */
 	public static boolean fileCopy(URL url,String toFile){
-		
-	
-		
+
+
+
 		HttpURLConnection httpUrl = null;
 		BufferedInputStream bis = null;
 		FileOutputStream fos = null;
 		try {
-		
+
 			httpUrl = (HttpURLConnection) url.openConnection();
 			if(httpUrl.getResponseCode() != 200){
 				return false;
 			}
-            httpUrl.connect();
-            File to_file = new File(toFile);
+			httpUrl.connect();
+			File to_file = new File(toFile);
 			if(!to_file.exists()){
 				to_file.createNewFile();
 			}
-				
-		
+
+
 			bis = new BufferedInputStream(httpUrl.getInputStream());
 			fos = new FileOutputStream(to_file);
-			
+
 			byte buf[] = new byte[1024];
-			
+
 			int size = 0;
 			while ((size = bis.read(buf)) != -1) {
-                fos.write(buf, 0, size);
-            }
-	
-			
+				fos.write(buf, 0, size);
+			}
+
+
 			return true;
-				
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -121,12 +139,12 @@ public class FileOperationUtil {
 				e.printStackTrace();
 			}
 
-			/*if(httpUrl!=null){
+			if(httpUrl!=null){
 				httpUrl.disconnect();
-			}*/
+			}
 		}
-		
-		
+
+
 	}
 
 	/**
@@ -136,7 +154,7 @@ public class FileOperationUtil {
 	 * @return
 	 */
 	public static boolean fileCopy(String formFile,String toFile){
-		
+
 		File form_file = new File(formFile);
 		File to_file = new File(toFile);
 		FileInputStream fis = null;
@@ -148,37 +166,37 @@ public class FileOperationUtil {
 			if(!to_file.exists()){
 				to_file.createNewFile();
 			}
-				
+
 			fis = new FileInputStream(form_file);
 			fos = new FileOutputStream(to_file);
-			
+
 			byte b[] = new byte[10];
-			
+
 			while(fis.read(b)!=-1){
 				fos.write(b);
 			}
-				
-			
-			
-			
+
+
+
+
 			return true;
-				
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}finally {
+			try {
+				fis.close();
+				fos.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				return false;
-			}finally {
-				try {
-					fis.close();
-					fos.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
 			}
-		
-		
+
+		}
+
+
 	}
 	/**
 	 * 创建目录
@@ -188,7 +206,7 @@ public class FileOperationUtil {
 	public static String createDir(String destDirName) {
 		File dir = new File(destDirName);
 		if (dir.exists()) {// 判断目录是否存在
-		
+
 			return destDirName;
 		}
 		if (!destDirName.endsWith(File.separator)) {// 结尾是否以"/"结束
@@ -197,7 +215,7 @@ public class FileOperationUtil {
 		if (dir.mkdirs()) {// 创建目标目录
 			return destDirName;
 		} else {
-		
+
 			return null;
 		}
 	}
@@ -205,31 +223,31 @@ public class FileOperationUtil {
 	 * 递归删除文件或目录
 	 * @param path	文件
 	 */
-	private static void deleteAllFilesOfDir(File path) {  
-		
-	    if (!path.exists())  
-	        return;  
-	    
-	    if (path.isFile()) {  
-	        path.delete();  
-	        return;  
-	    }  
-	    
-	    File[] files = path.listFiles();  
-	    for (int i = 0; i < files.length; i++) {  
-	        deleteAllFilesOfDir(files[i]);  
-	    }  
-	    path.delete();  
+	private static void deleteAllFilesOfDir(File path) {
+
+		if (!path.exists())
+			return;
+
+		if (path.isFile()) {
+			path.delete();
+			return;
+		}
+
+		File[] files = path.listFiles();
+		for (int i = 0; i < files.length; i++) {
+			deleteAllFilesOfDir(files[i]);
+		}
+		path.delete();
 	}
 	/**
 	 * 删除文件或目录
 	 * @param path	路径名
 	 */
-	public static void deleteAllFilesOfDir(String path) {  
-		
+	public static void deleteAllFilesOfDir(String path) {
+
 		File file = new File(path);
-		if (!file.exists())  
-	        return;
+		if (!file.exists())
+			return;
 		deleteAllFilesOfDir(file);
 	}
 
@@ -301,42 +319,42 @@ public class FileOperationUtil {
 	 * @return
 	 */
 	public static byte[] toByteArray(File file){
-	
+
 		if(!file.exists()){
 			return null;
 		}
-   
-  
-        ByteArrayOutputStream bos = new ByteArrayOutputStream((int) file.length());  
-        BufferedInputStream in = null;  
-        try {  
-            in = new BufferedInputStream(new FileInputStream(file));  
-            int buf_size = 1024;  
-            byte[] buffer = new byte[buf_size];  
-            int len = 0;  
-            while (-1 != (len = in.read(buffer, 0, buf_size))) {  
-                bos.write(buffer, 0, len);  
-            }  
-            return bos.toByteArray();  
-        } catch (IOException e) {  
-            e.printStackTrace();  
-         
-        } finally {  
-            try {  
-                in.close();  
-            } catch (IOException e) {  
-                e.printStackTrace();  
-            }  
-            try {
+
+
+		ByteArrayOutputStream bos = new ByteArrayOutputStream((int) file.length());
+		BufferedInputStream in = null;
+		try {
+			in = new BufferedInputStream(new FileInputStream(file));
+			int buf_size = 1024;
+			byte[] buffer = new byte[buf_size];
+			int len = 0;
+			while (-1 != (len = in.read(buffer, 0, buf_size))) {
+				bos.write(buffer, 0, len);
+			}
+			return bos.toByteArray();
+		} catch (IOException e) {
+			e.printStackTrace();
+
+		} finally {
+			try {
+				in.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
 				bos.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}  
-        }  
-        
-        return null;
-		
+			}
+		}
+
+		return null;
+
 	}
 
 	/**
@@ -459,5 +477,52 @@ public class FileOperationUtil {
 			}
 		}
 		return true;
+	}
+	/**
+	 * 字节转文件
+	 * @param catalog 目录地址
+	 * @param name	文件名
+	 * @param fileByte  字节
+	 * @return
+	 */
+	public static boolean writeFile(String catalog,String name,byte[] fileByte){
+
+		File file = new File(catalog + File.separator + name);
+		if (file.exists()) {
+			file.delete();
+		}
+		boolean flag = false;
+
+		try (FileOutputStream output = new FileOutputStream(file);) {
+
+			output.write(fileByte);
+			output.flush();
+			flag = true;
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+
+		return flag;
+	}
+	public static String readFile(String filePath) throws IOException {
+
+		StringBuffer buffer = new StringBuffer();
+		File file = new File(filePath);
+		if(!file.exists()){
+			return null;
+		}
+		BufferedReader bufr = null;
+
+		bufr = new BufferedReader(new FileReader(file));
+		String line =null;
+		while((line = bufr.readLine())!=null){
+			buffer.append(line);
+		}
+
+		return buffer.toString();
 	}
 }

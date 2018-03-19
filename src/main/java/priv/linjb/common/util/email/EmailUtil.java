@@ -1,5 +1,6 @@
 package priv.linjb.common.util.email;
 
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -10,7 +11,6 @@ import java.util.Properties;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
-import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -21,21 +21,32 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-
-import org.apache.commons.lang3.StringUtils;
-
 public class EmailUtil {
-	
+
+	/**
+	 * 发送邮件的方法
+	 * @param myEmailSMTPHost 	邮件服务器的smtpHost地址：如smtp.exmail.qq.com
+	 * @param myEmailAccount	帐号
+	 * @param myEmailPassword	密码
+	 * @param receiveMail		收件人列表
+	 * @param receiveMailCopy	抄送人列表
+	 * @param receiverName		主题
+	 * @param tag				标签
+	 * @param setSubject		子主题
+	 * @param content			内容
+	 * @param files				附件
+	 * @return
+	 */
 	public static boolean sendEmail(
 			String myEmailSMTPHost, String myEmailAccount, String myEmailPassword,
-			String[] receiveMail, String[] receiveMailCopy, String receiverName,
-			String tag, String setSubject, String content,String[] files) {
+			List<String> receiveMail, List<String> receiveMailCopy, String receiverName,
+			String tag, String setSubject, String content,List<String> files) {
 
 		// 1. 创建参数配置, 用于连接邮件服务器的参数配置
 		Properties props = new Properties(); // 参数配置
 		props.setProperty("mail.transport.protocol", "smtp"); // 使用的协议（JavaMail规范要求）
 		props.setProperty("mail.smtp.host", myEmailSMTPHost); // 发件人的邮箱的 SMTP
-																// 服务器地址
+		// 服务器地址
 		props.setProperty("mail.smtp.auth", "true"); // 需要请求认证
 
 		// PS: 某些邮箱服务器要求 SMTP 连接需要使用 SSL 安全认证 (为了提高安全性, 邮箱支持SSL连接, 也可以自己开启),
@@ -112,9 +123,9 @@ public class EmailUtil {
 	 * @return
 	 * @throws Exception
 	 */
-	private static MimeMessage createMimeMessage(Session session, String sendMail, 
-			String[] receiveMail,String[] receiveMailCopy, String tag,
-			String receiverName, String setSubject, String content,String[] files) throws Exception {
+	private static MimeMessage createMimeMessage(Session session, String sendMail,
+												 List<String> receiveMail, List<String> receiveMailCopy, String tag,
+												 String receiverName, String setSubject, String content, List<String> files) throws Exception {
 		// 1. 创建一封邮件
 		MimeMessage message = new MimeMessage(session);
 
@@ -132,15 +143,15 @@ public class EmailUtil {
 
 		// 5. Content: 邮件正文（可以使用html标签）
 		//message.setContent(content, "text/html;charset=UTF-8");
-		Multipart multipart = new MimeMultipart(); 
-		BodyPart contentPart = new MimeBodyPart(); 
+		Multipart multipart = new MimeMultipart();
+		BodyPart contentPart = new MimeBodyPart();
 		contentPart.setHeader("Content-Type", "text/html; charset=GBK");
 		contentPart.setText(content);
 		multipart.addBodyPart(contentPart);
 		//添加内容到正文
 		message.setContent(multipart);
 		//添加附件
-        message.setContent(addFileInMultipart(multipart,files));
+		message.setContent(addFileInMultipart(multipart,files));
 
 		// 6. 设置发件时间
 		message.setSentDate(new Date());
@@ -149,9 +160,9 @@ public class EmailUtil {
 
 		return message;
 	}
-	
-	private static void setReceive(MimeMessage message,String[] receiveMail,String[] receiveMailCopy) throws AddressException, MessagingException{
-		
+
+	private static void setReceive(MimeMessage message,List<String> receiveMail,List<String> receiveMailCopy) throws AddressException, MessagingException{
+
 		List<InternetAddress> receiveMailList = new ArrayList();
 		List<InternetAddress> receiveMailCopyList = new ArrayList();
 
@@ -159,51 +170,51 @@ public class EmailUtil {
 			for(String address:receiveMail)
 				if(StringUtils.isNotBlank(address))
 					receiveMailList.add(new InternetAddress(address));
-		
-		
+
+
 		InternetAddress[] receiveMailAddress = (InternetAddress[]) receiveMailList.toArray(new InternetAddress[receiveMailList.size()]);
-		message.setRecipients(MimeMessage.RecipientType.TO,receiveMailAddress);	
-		
+		message.setRecipients(MimeMessage.RecipientType.TO,receiveMailAddress);
+
 		if(receiveMailCopy!=null)
 			for(String address:receiveMailCopy)
 				if(StringUtils.isNotBlank(address))
 					receiveMailCopyList.add(new InternetAddress(address));
-		
+
 		InternetAddress[] receiveMailCopyAddress = (InternetAddress[]) receiveMailCopyList.toArray(new InternetAddress[receiveMailCopyList.size()]);
-		message.setRecipients(MimeMessage.RecipientType.CC, receiveMailCopyAddress);			
+		message.setRecipients(MimeMessage.RecipientType.CC, receiveMailCopyAddress);
 
 	}
-	private static Multipart addFileInMultipart(Multipart multipart,String[] files){
+	private static Multipart addFileInMultipart(Multipart multipart,List<String> files){
 		if(files == null)
 			return multipart;
-		
+
 		File usFile = null;
 		try {
-			/*添加附件*/  
-	        for (String file : files) {  
-	        	
-	        	if(StringUtils.isBlank(file))
-	        		break;
-	            usFile = new File(file);  
-	            if(!usFile.exists())
-	            	break;
-	            
-	            MimeBodyPart fileBody = new MimeBodyPart();  
-	            DataSource source = new FileDataSource(file);  
-	            fileBody.setDataHandler(new DataHandler(source));  
-	            sun.misc.BASE64Encoder enc = new sun.misc.BASE64Encoder();  
-	            fileBody.setFileName("=?GBK?B?"  
-	                    + enc.encode(usFile.getName().getBytes()) + "?=");  
-	            multipart.addBodyPart(fileBody);  
-	        }  
-	        
-	        return multipart;
+			/*添加附件*/
+			for (String file : files) {
+
+				if(StringUtils.isBlank(file))
+					break;
+				usFile = new File(file);
+				if(!usFile.exists())
+					break;
+
+				MimeBodyPart fileBody = new MimeBodyPart();
+				DataSource source = new FileDataSource(file);
+				fileBody.setDataHandler(new DataHandler(source));
+				sun.misc.BASE64Encoder enc = new sun.misc.BASE64Encoder();
+				fileBody.setFileName("=?GBK?B?"
+						+ enc.encode(usFile.getName().getBytes()) + "?=");
+				multipart.addBodyPart(fileBody);
+			}
+
+			return multipart;
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-		
+
 		return multipart;
-		
+
 	}
 }
 

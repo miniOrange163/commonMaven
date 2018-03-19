@@ -46,7 +46,7 @@ public class HttpTest {
 	
 	private final static String facePosition = "faceStruct/facePositionBase64.htm";
 
-	//private final static String ip = "http://172.18.10.226:9088/";			//赵鹏依本机
+//	private final static String ip = "http://172.18.10.226:9088/";			//赵鹏依本机
 	private final static String ip = "http://172.18.10.176:9088/";		//识别服务器
 	public static String transcoding(String str){
 		if(str == null)
@@ -193,8 +193,8 @@ public class HttpTest {
 		String url = ip + faceFeature;
 		System.out.println("调用请求： " + url);
 		String key = "e9143fbd4e9b5fe493dd7be4b762d056";
-		String facePosition = "1085,480,1255,700";
-		String base64 = ImageBase64.imageToBase64("e:/SAVE/test/002.jpg");
+		String facePosition = "0,0,416,232";
+		String base64 = ImageBase64.imageToBase64("E:\\SAVE\\模拟测试\\人脸\\过人记录\\008坐标&0,0,416,232.jpg");
 		JSONObject json = new JSONObject();
 		json.put("facePosition", facePosition);
 		json.put("bigImg", base64);
@@ -210,10 +210,16 @@ public class HttpTest {
 		String data = response.getString("data");
 		System.out.println(data);
 
+
 		
 		String feature = response.getJSONObject("data").getString("feature");
 		System.out.println("\n\n\nfeature: " + feature);
+		String smallFacePosition = response.getJSONObject("data").getString("smallFacePosition");
+		System.out.println("\n\n\nsmallFacePosition: " + smallFacePosition);
 		//feaTest(feature);
+
+		String[] feaList = feature.split(",");
+		System.out.println("length:" + feaList.length);
 		return result;
 	}
 	
