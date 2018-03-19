@@ -25,7 +25,7 @@ public class EmailUtil {
 
 	/**
 	 * 发送邮件的方法
-	 * @param myEmailSMTPHost 	邮件服务器的smtpHost地址：如smtp.exmail.qq.com
+	 * @param myEmailSMTPHost 	邮件服务器的smtpHost地址：如 smtp.exmail.qq.com
 	 * @param myEmailAccount	帐号
 	 * @param myEmailPassword	密码
 	 * @param receiveMail		收件人列表
