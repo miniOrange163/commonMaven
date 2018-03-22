@@ -22,8 +22,8 @@ public class MyTest {
 	@Test
 	public void test() throws ParseException {
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String str = "{\"happenTime\":\"${happenTime}\",}";
+		System.out.println(str);
 
-		System.out.println(sdf.format(sdf.parse("0000-00-00 15:00:00")));
 	}
 }

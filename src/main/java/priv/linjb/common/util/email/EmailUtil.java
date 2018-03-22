@@ -21,6 +21,17 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+
+
+/**
+ * @author: 林嘉宝
+ *
+ * @Date: 2018/3/14(最后更新时间)
+ *
+ * @name: 邮件发送的工具类
+ *
+ * @Description:
+ */
 public class EmailUtil {
 
 	/**
