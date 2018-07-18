@@ -1,102 +1,74 @@
 package priv.linjb.learn.test;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.junit.Test;
+import priv.linjb.common.util.file.FileOperationUtil;
 import priv.linjb.learn.test.entity.Person;
 import priv.linjb.learn.test.entity.Student;
+import priv.linjb.learn.test.entity.ThreadLocalTest;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MyTest {
 
 
-
-	public static void main(String[] args) throws ParseException {
-
-		SimpleDateFormat sdf_Day = new SimpleDateFormat("yyyyMMdd");
-		SimpleDateFormat sdf_Month = new SimpleDateFormat("yyyyMM");
-		SimpleDateFormat sdf_Year = new SimpleDateFormat("yyyy");
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(sdf_Month.parse("201805"));
-		cal.add(Calendar.MONTH,1);
-		cal.add(Calendar.DAY_OF_YEAR,-1);
-
-		System.out.println(sdf_Day.format(cal.getTime()));
-
-	}
+	/**
+	 * 测试定时器的使用
+	 */
 	@Test
-	public void test() throws ParseException {
+	public void timer(){
+		final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+		Timer timer = new Timer();
+		timer.schedule(new TimerTask() {
+			public void run() {
 
+				System.out.println("test: " + sdf.format(new Date()));
+
+			}
+		}, 0,2000);// 设定指定的时间time,此处为2000毫秒
+		try {
+			Thread.sleep(6000);
+			timer.cancel();
+			Thread.sleep(6000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
-	public String moneyToCapital(long sum){
+	/**
+	 * 结论：不同线程对被ThreadLocal包装的静态变量进行修改操作，互不影响
+	 *
+	 * @throws InterruptedException
+	 */
+	@Test
+	public void testThreadLocal() throws InterruptedException {
 
-		Map map = new HashedMap();
-		map.put(0, "零");
-		map.put(1, "壹");
-		map.put(2, "贰");
-		map.put(3, "叁");
-		map.put(4, "肆");
-		map.put(5, "伍");
-		map.put(6, "陆");
-		map.put(7, "柒");
-		map.put(8, "捌");
-		map.put(9, "玖");
+		new Thread(()->{
+				ThreadLocalTest.local.set(20);
+				ThreadLocalTest.i = 20;
+				System.out.println(Thread.currentThread().getName() +",local:"+ ThreadLocalTest.local.get() + "i:" + ThreadLocalTest.i);
+		}).start();
 
-		Map bitMap = new HashedMap();
-		bitMap.put(2, "拾");
-		bitMap.put(3, "佰");
-		bitMap.put(4, "仟");
-		bitMap.put(5, "万");
+		new Thread(()->{
+			ThreadLocalTest.local.set(30);
+			ThreadLocalTest.i = 30;
+			System.out.println(Thread.currentThread().getName() +",local:"+ ThreadLocalTest.local.get() + "i:" + ThreadLocalTest.i);
 
-		StringBuffer sb = new StringBuffer();
-		String sumString = String.valueOf(sum);
-		int length = sumString.length();
-		int base = 1;
-		for (int i = 0; i < length - 1; i++) {
-			base = base * 10;
-		}
+		}).start();
 
-		for (int i = 0; i < length; i++) {
-			if (i > 0) {
-				if (sumString.substring(i - 1, i).equals("0")) {
-					continue;
-				}
-			}
-			int t = Integer.parseInt(sumString.substring(i,i+1));
-			int bit = length - i;
 
-			if (t == 0) {
-				String end = sumString.substring(i);
-				Pattern pattern = Pattern.compile("^0{0,}0$");
-				Matcher matcher = pattern.matcher(end);
-				if (matcher.matches()) {
-					if (bit > 5) {
-						sb.append("万");
-					}
-					continue;
-				}
-			}
-			sb.append(map.get(t));
-			if (bit > 5) {
-				bit = bit - 4;
-			}
-			sb.append(bitMap.get(bit));
-		}
+		ThreadLocalTest.local.set(40);
+		ThreadLocalTest.i = 40;
+		System.out.println(Thread.currentThread().getName() +",local:"+ ThreadLocalTest.local.get() + "i:" + ThreadLocalTest.i);
 
-		sb.append("元整");
-
-		return sb.toString();
 	}
 }

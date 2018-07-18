@@ -6,6 +6,8 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -33,6 +35,7 @@ import java.net.URL;
  */
 public class FileOperationUtil {
 
+	private static Logger logger = LoggerFactory.getLogger(FileOperationUtil.class);
 
 	public static byte[] downloadToByte(String url) throws IOException {
 
@@ -40,12 +43,24 @@ public class FileOperationUtil {
 		HttpGet httpget = new HttpGet(url);
 		HttpResponse response = httpclient.execute(httpget);
 		HttpEntity entity = response.getEntity();
-		InputStream in = entity.getContent();
-		byte[] byt = new byte[in.available()];
+		InputStream inStream = entity.getContent();
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		byte[] buffer = new byte[1024];
+		int len = -1;
+		while((len = inStream.read(buffer)) != -1){
+			outStream.write(buffer, 0, len);
+		}
+		try{
 
-		in.read(byt);
+		}catch (Exception e){
 
-		return byt;
+		}finally {
+			outStream.close();
+			inStream.close();
+		}
+
+		return outStream.toByteArray();
+
 	}
 
 	/**
@@ -60,13 +75,13 @@ public class FileOperationUtil {
 		HttpGet httpget = new HttpGet(url);
 		HttpResponse response = httpclient.execute(httpget);
 		HttpEntity entity = response.getEntity();
-		InputStream in = entity.getContent();
 		File file = new File(path);
 		if(file.exists()){
 			file.delete();
 		}
-		try {
-			FileOutputStream fout = new FileOutputStream(file);
+		try(InputStream in = entity.getContent();
+			FileOutputStream fout = new FileOutputStream(file);) {
+
 			int l = -1;
 			byte[] tmp = new byte[1024];
 			while ((l = in.read(tmp)) != -1) {
@@ -75,9 +90,6 @@ public class FileOperationUtil {
 			}
 			fout.flush();
 			fout.close();
-		} finally {
-			// 关闭低层流。
-			in.close();
 		}
 		httpclient.close();
 		return true;
@@ -124,6 +136,7 @@ public class FileOperationUtil {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			logger.error(e.toString(),e);
 			return false;
 		}finally {
 			try {
@@ -137,6 +150,8 @@ public class FileOperationUtil {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				logger.error(e.toString(),e);
+
 			}
 
 			if(httpUrl!=null){
@@ -184,6 +199,7 @@ public class FileOperationUtil {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			logger.error(e.toString(),e);
 			return false;
 		}finally {
 			try {
@@ -304,6 +320,7 @@ public class FileOperationUtil {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				logger.error(e.toString(),e);
 			}
 			if(httpUrl!=null){
 				httpUrl.disconnect();
@@ -338,18 +355,21 @@ public class FileOperationUtil {
 			return bos.toByteArray();
 		} catch (IOException e) {
 			e.printStackTrace();
+			logger.error(e.toString(),e);
 
 		} finally {
 			try {
 				in.close();
 			} catch (IOException e) {
 				e.printStackTrace();
+				logger.error(e.toString(),e);
 			}
 			try {
 				bos.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				logger.error(e.toString(),e);
 			}
 		}
 
@@ -408,6 +428,7 @@ public class FileOperationUtil {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			logger.error(e.toString(),e);
 			return false;
 		}finally {
 			try {
@@ -418,6 +439,7 @@ public class FileOperationUtil {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				logger.error(e.toString(),e);
 
 			}
 		}
@@ -473,6 +495,7 @@ public class FileOperationUtil {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				logger.error(e.toString(),e);
 
 			}
 		}
@@ -501,8 +524,10 @@ public class FileOperationUtil {
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+			logger.error(e.toString(),e);
 		} catch (IOException e) {
 			e.printStackTrace();
+			logger.error(e.toString(),e);
 		}
 
 
