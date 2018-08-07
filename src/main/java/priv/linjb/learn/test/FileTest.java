@@ -6,10 +6,9 @@ import priv.linjb.common.util.base64.ImageBase64;
 import priv.linjb.common.util.base64.ImgBase64Util;
 import priv.linjb.common.util.file.FileOperationUtil;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.text.ParseException;
+import java.util.Properties;
 
 /**
  * @author: 林嘉宝
@@ -75,15 +74,27 @@ public class FileTest {
 
     @Test
     public void test() throws IOException {
-        /*String base64String = ImgBase64Util
-                .imgToBase64String(
-                        FileOperationUtil.downloadToByte("http://172.18.20.156:8880//group1/M00/07/11/rBIUnVsh2TCEMuefAAAAAMjddXg587.jpg"));
-*/
-        String base64String = ImgBase64Util
-                .imgToBase64String(
-                        FileOperationUtil.downloadToByte("http://172.18.20.156:8880/group1/M00/1D/A1/rBIUnVtO9TOEQqcfAAAAAMZELs0989.jpg"));
+        Properties properties = new Properties();
+        try(InputStreamReader isr=new InputStreamReader(new FileInputStream(new File("my/file/hikvision.properties")),"utf-8")){
+            properties.load(isr);
+            isr.close();
+        }
 
-        System.out.println("base64String : " + base64String);
+        String property = properties.getProperty("hikvision.kkmy");
+
+        System.out.println(property);
+
+        properties.setProperty("hikvision.kkmy","123");
+
+        property = properties.getProperty("hikvision.kkmy");
+        System.out.println(property);
+
+
+        try(OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(new File("my/file/hikvision.properties")),"utf-8")){
+
+            properties.store(out,"");
+        }
+
     }
 
 }

@@ -14,6 +14,5 @@ public class ThreadLocalTest {
 
     public static ThreadLocal<Integer> local = new ThreadLocal<Integer>();
 
-
     public static Integer i;
 }

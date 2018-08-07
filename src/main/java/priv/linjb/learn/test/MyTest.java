@@ -20,6 +20,15 @@ import java.util.regex.Pattern;
 public class MyTest {
 
 
+	@Test
+	public void test(){
+
+		int MAXIMUM_CAPACITY = 1 << 30;
+
+		System.out.println(MAXIMUM_CAPACITY);
+
+		System.out.println(MAXIMUM_CAPACITY >>> 1);
+	}
 	/**
 	 * 测试定时器的使用
 	 */
@@ -55,20 +64,20 @@ public class MyTest {
 		new Thread(()->{
 				ThreadLocalTest.local.set(20);
 				ThreadLocalTest.i = 20;
-				System.out.println(Thread.currentThread().getName() +",local:"+ ThreadLocalTest.local.get() + "i:" + ThreadLocalTest.i);
+				System.out.println(Thread.currentThread().getName() +",local:"+ ThreadLocalTest.local.get() + "	i:" + ThreadLocalTest.i);
 		}).start();
 
 		new Thread(()->{
 			ThreadLocalTest.local.set(30);
 			ThreadLocalTest.i = 30;
-			System.out.println(Thread.currentThread().getName() +",local:"+ ThreadLocalTest.local.get() + "i:" + ThreadLocalTest.i);
+			System.out.println(Thread.currentThread().getName() +",local:"+ ThreadLocalTest.local.get() + "	i:" + ThreadLocalTest.i);
 
 		}).start();
 
 
 		ThreadLocalTest.local.set(40);
 		ThreadLocalTest.i = 40;
-		System.out.println(Thread.currentThread().getName() +",local:"+ ThreadLocalTest.local.get() + "i:" + ThreadLocalTest.i);
+		System.out.println(Thread.currentThread().getName() +",local:"+ ThreadLocalTest.local.get() + "	i:" + ThreadLocalTest.i);
 
 	}
 }

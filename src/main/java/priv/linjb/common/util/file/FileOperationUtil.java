@@ -401,7 +401,7 @@ public class FileOperationUtil {
 		//创建目录
 		FileOperationUtil.createDir(catalog);
 
-		File file = new File(catalog + name);
+		File file = new File(catalog + File.separator + name);
 
 		FileOutputStream fos = null;
 		BufferedWriter writer = null;
@@ -458,7 +458,7 @@ public class FileOperationUtil {
 		//创建目录
 		FileOperationUtil.createDir(catalog);
 
-		File file = new File(catalog + name);
+		File file = new File(catalog + File.separator + name);
 
 		FileOutputStream fos = null;
 		BufferedWriter writer = null;

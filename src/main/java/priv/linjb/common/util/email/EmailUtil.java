@@ -61,7 +61,7 @@ public class EmailUtil {
 		props.setProperty("mail.smtp.auth", "true"); // 需要请求认证
 
 		// PS: 某些邮箱服务器要求 SMTP 连接需要使用 SSL 安全认证 (为了提高安全性, 邮箱支持SSL连接, 也可以自己开启),
-		// 如果无法连接邮件服务器, 仔细查看控制台打印的 log, 如果有有类似 “连接失败, 要求 SSL 安全连接” 等错误,
+		// 如果无法连接邮件服务器, 仔细查看控制台打印的 logger, 如果有有类似 “连接失败, 要求 SSL 安全连接” 等错误,
 		// 打开下面 /* ... */ 之间的注释代码, 开启 SSL 安全连接。
 		// SMTP 服务器的端口 (非 SSL 连接的端口一般默认为 25, 可以不添加, 如果开启了 SSL 连接,
 		// 需要改为对应邮箱的 SMTP 服务器的端口, 具体可查看对应邮箱服务的帮助,
@@ -77,7 +77,7 @@ public class EmailUtil {
 		boolean isSendSuccess = false;
 		try {
 			Session session = Session.getDefaultInstance(props);
-			session.setDebug(true); // 设置为debug模式, 可以查看详细的发送 log
+			session.setDebug(true); // 设置为debug模式, 可以查看详细的发送 logger
 
 			// 3. 创建一封邮件
 			MimeMessage message = createMimeMessage(session, myEmailAccount, receiveMail,receiveMailCopy, tag,
@@ -88,7 +88,7 @@ public class EmailUtil {
 
 			// 5. 使用 邮箱账号 和 密码 连接邮件服务器, 这里认证的邮箱必须与 message 中的发件人邮箱一致, 否则报错
 			//
-			// PS_01: 成败的判断关键在此一句, 如果连接服务器失败, 都会在控制台输出相应失败原因的 log,
+			// PS_01: 成败的判断关键在此一句, 如果连接服务器失败, 都会在控制台输出相应失败原因的 logger,
 			// 仔细查看失败原因, 有些邮箱服务器会返回错误码或查看错误类型的链接, 根据给出的错误
 			// 类型到对应邮件服务器的帮助网站上查看具体失败原因。
 			//
