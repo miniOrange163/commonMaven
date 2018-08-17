@@ -1,14 +1,20 @@
 package priv.linjb.learn.test;
 
+import org.apache.http.client.config.RequestConfig;
 import org.junit.Test;
 import priv.linjb.common.util.file.FileOperationUtil;
 import priv.linjb.learn.test.entity.Person;
 import priv.linjb.learn.test.entity.Student;
 import priv.linjb.learn.test.entity.ThreadLocalTest;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -80,4 +86,10 @@ public class MyTest {
 		System.out.println(Thread.currentThread().getName() +",local:"+ ThreadLocalTest.local.get() + "	i:" + ThreadLocalTest.i);
 
 	}
+	@Test
+	public void test2() throws IOException {
+
+
+	}
+
 }

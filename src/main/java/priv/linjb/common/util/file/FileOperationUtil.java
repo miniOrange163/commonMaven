@@ -3,12 +3,16 @@ package priv.linjb.common.util.file;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.xmlgraphics.image.loader.impl.imageio.ImageIOUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -30,7 +34,8 @@ import java.net.URL;
  * 11.	writeFile(String catalog,String name,byte[] fileByte)					字节转文件
  * 12.  download(String url,String path)											从网络地址的url下载文件到指定路径
  * 13.  downloadToByte(String url)													从网络地址的url下载文件转到byte
- * 14.	readFile(String filePath)													读取文本文件内容
+ * 14.	downloadToBufferedImage(String url,RequestConfig config)					从网络地址的url下载文件转到BufferedImage
+ * 15.	readFile(String filePath)													读取文本文件内容
  *
  */
 public class FileOperationUtil {
@@ -57,12 +62,34 @@ public class FileOperationUtil {
 		}finally {
 			outStream.close();
 			inStream.close();
+            httpclient.close();
 		}
 
 		return outStream.toByteArray();
 
 	}
+    public static BufferedImage downloadToBufferedImage(String url, RequestConfig config) throws IOException {
 
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        HttpGet httpget = new HttpGet(url);
+        if (config != null) {
+            httpget.setConfig(config);
+        }
+
+        HttpResponse response = httpclient.execute(httpget);
+        HttpEntity entity = response.getEntity();
+
+        try(InputStream inStream = entity.getContent()){
+
+
+            BufferedImage read = ImageIO.read(inStream);
+
+            return read;
+        }finally {
+            httpclient.close();
+        }
+
+    }
 	/**
 	 * 从远程服务器拷贝到本地文件
 	 * @param url	源文件url地址
@@ -90,8 +117,9 @@ public class FileOperationUtil {
 			}
 			fout.flush();
 			fout.close();
-		}
-		httpclient.close();
+		}finally {
+            httpclient.close();
+        }
 		return true;
 	}
 	/**

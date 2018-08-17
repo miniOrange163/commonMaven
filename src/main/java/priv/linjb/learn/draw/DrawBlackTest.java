@@ -1,10 +1,11 @@
 package priv.linjb.learn.draw;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
+/*import com.sun.image.codec.jpeg.JPEGCodec;
+import com.sun.image.codec.jpeg.JPEGImageEncoder;*/
 import org.junit.Test;
 import priv.linjb.common.util.file.FileOperationUtil;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
@@ -21,7 +22,7 @@ import java.io.OutputStream;
  *
  * @Description: 
  */
-public class DrawBlack {
+public class DrawBlackTest {
 
     @Test
     public void black(){
@@ -29,16 +30,19 @@ public class DrawBlack {
         try(OutputStream  outImage = new FileOutputStream("d:/black.jpg");) {
             int width = 3840;
             int height = 240;
-            BufferedImage biNew = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);//在内存中创建新图象
-            Graphics2D gNew = (Graphics2D) biNew.getGraphics();// 获取图形上下文
+            //在内存中创建新图象
+            BufferedImage biNew = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            // 获取图形上下文
+            Graphics2D gNew = (Graphics2D) biNew.getGraphics();
             gNew.setBackground(Color.BLACK);
             Font font = new Font("Microsoft YaHei UI", Font.PLAIN, 40);
             gNew.setFont(font);
             gNew.drawString("你好" , 10, 30);
 
 
-            JPEGImageEncoder enc = JPEGCodec.createJPEGEncoder(outImage);
-            enc.encode(biNew);
+            /*JPEGImageEncoder enc = JPEGCodec.createJPEGEncoder(outImage);
+            enc.encode(biNew);*/
+            ImageIO.write(biNew, "jpg", outImage);
             // 图像生效
             gNew.dispose();
             outImage.close();
