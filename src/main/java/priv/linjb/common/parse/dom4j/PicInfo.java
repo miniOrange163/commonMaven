@@ -8,6 +8,16 @@ public class PicInfo {
 
 	@XStreamAlias("JGSJ")
 	private String JGSJ;
+	@XStreamAlias("ABCD")
+	private String abcd;
+
+	public String getAbcd() {
+		return abcd;
+	}
+
+	public void setAbcd(String abcd) {
+		this.abcd = abcd;
+	}
 
 	public String getJGSJ() {
 		return JGSJ;

@@ -86,10 +86,46 @@ public class MyTest {
 		System.out.println(Thread.currentThread().getName() +",local:"+ ThreadLocalTest.local.get() + "	i:" + ThreadLocalTest.i);
 
 	}
+
+
+	public static int[] getNext(String ps) {
+
+		char[] p = ps.toCharArray();
+
+		int[] next = new int[p.length];
+
+		next[0] = -1;
+
+		int j = 0;
+
+		int k = -1;
+
+		while (j < p.length - 1) {
+
+			if (k == -1 || p[j] == p[k]) {
+
+				next[++j] = ++k;
+
+			} else {
+
+				k = next[k];
+
+			}
+
+		}
+
+		return next;
+
+	}
 	@Test
-	public void test2() throws IOException {
+	public void kmp(){
+		String str = "abcbbdd";
 
+		int[] next = getNext(str);
 
+		for (int i = 0; i < next.length; i++) {
+			System.out.print(next[i]);
+		}
 	}
 
 }

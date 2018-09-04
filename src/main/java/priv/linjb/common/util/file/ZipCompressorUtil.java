@@ -78,9 +78,10 @@ public class ZipCompressorUtil {
     
     /** 压缩一个目录 */    
     private static void compressDirectory(File dir, ZipOutputStream out, String basedir) {     
-        if (!dir.exists())     
-            return;     
-    
+        if (!dir.exists()){
+            return;
+        }
+
         File[] files = dir.listFiles();     
         for (int i = 0; i < files.length; i++) {     
             /* 递归 */    

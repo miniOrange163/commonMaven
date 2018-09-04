@@ -7,13 +7,23 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.xmlgraphics.image.loader.impl.imageio.ImageIOUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -21,27 +31,37 @@ import java.net.URL;
  * 文件操作工具类
  * @author Linjb
  *
- * 1. 	fileCopy(URL url,String toFile) 											从远程URL路径拷贝到本地文件
- * 2.	fileCopy(String formFile,String toFile)										从本地路径拷贝到本地文件
- * 3.	createDir(String destDirName)												创建目录
- * 4.	deleteAllFilesOfDir(String path)											删除目录
- * 5.	toByteArray(String filePath)												文件路径转字节数组
- * 6.	toByteArray(File file)														文件转字节数组
- * 7.	toByteArray(URL url)														远程URL路径转字节数组
- * 8.	writeFile(String catalog,String name,String content)						写入字符串到文件
- * 9.	writeFile(String catalog,String name,String content,String charset)			以指定字符编码写入字符串到文件
- * 10.	writeFileBuffer(String catalog,String name,String content,String charset)	以指定字符编码用字符流写入字符串到文件
- * 11.	writeFile(String catalog,String name,byte[] fileByte)					字节转文件
- * 12.  download(String url,String path)											从网络地址的url下载文件到指定路径
- * 13.  downloadToByte(String url)													从网络地址的url下载文件转到byte
- * 14.	downloadToBufferedImage(String url,RequestConfig config)					从网络地址的url下载文件转到BufferedImage
- * 15.	readFile(String filePath)													读取文本文件内容
+ * 1.     fileCopy(URL url,String toFile)                                             从远程URL路径拷贝到本地文件
+ * 2.    fileCopy(String formFile,String toFile)                                        从本地路径拷贝到本地文件
+ * 3.    createDir(String destDirName)                                                创建目录
+ * 4.    deleteAllFilesOfDir(String path)                                            删除目录
+ * 5.    toByteArray(String filePath)                                                文件路径转字节数组
+ * 6.    toByteArray(File file)                                                        文件转字节数组
+ * 7.    toByteArray(URL url)                                                        远程URL路径转字节数组
+ * 8.    writeFile(String catalog,String name,String content)                        写入字符串到文件
+ * 9.    writeFile(String catalog,String name,String content,String charset)            以指定字符编码写入字符串到文件
+ * 10.    writeFileBuffer(String catalog,String name,String content,String charset)    以指定字符编码用字符流写入字符串到文件
+ * 11.    writeFile(String catalog,String name,byte[] fileByte)                    字节转文件
+ * 12.  download(String url,String path)                                            从网络地址的url下载文件到指定路径
+ * 13.  downloadToByte(String url)                                                    从网络地址的url下载文件转到byte
+ * 14.    downloadToBufferedImage(String url,RequestConfig config)                    从网络地址的url下载文件转到BufferedImage
+ * 15.    readFile(String filePath)                                                    读取文本文件内容
  *
  */
-public class FileOperationUtil {
+public final class FileOperationUtil {
 
 	private static Logger logger = LoggerFactory.getLogger(FileOperationUtil.class);
 
+	private FileOperationUtil(){
+
+	}
+
+	/**
+	 *
+	 * @param url 远程路径地址
+	 * @return 结果
+	 * @throws IOException 异常
+	 */
 	public static byte[] downloadToByte(String url) throws IOException {
 
 		CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -50,51 +70,62 @@ public class FileOperationUtil {
 		HttpEntity entity = response.getEntity();
 		InputStream inStream = entity.getContent();
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-		byte[] buffer = new byte[1024];
-		int len = -1;
-		while((len = inStream.read(buffer)) != -1){
-			outStream.write(buffer, 0, len);
-		}
-		try{
 
-		}catch (Exception e){
+		try{
+			byte[] buffer = new byte[1024];
+			int len = -1;
+			while((len = inStream.read(buffer)) != -1){
+				outStream.write(buffer, 0, len);
+			}
 
 		}finally {
 			outStream.close();
 			inStream.close();
-            httpclient.close();
+			httpclient.close();
 		}
 
 		return outStream.toByteArray();
 
 	}
-    public static BufferedImage downloadToBufferedImage(String url, RequestConfig config) throws IOException {
 
-        CloseableHttpClient httpclient = HttpClients.createDefault();
-        HttpGet httpget = new HttpGet(url);
-        if (config != null) {
-            httpget.setConfig(config);
-        }
-
-        HttpResponse response = httpclient.execute(httpget);
-        HttpEntity entity = response.getEntity();
-
-        try(InputStream inStream = entity.getContent()){
-
-
-            BufferedImage read = ImageIO.read(inStream);
-
-            return read;
-        }finally {
-            httpclient.close();
-        }
-
-    }
 	/**
+	 *
+	 * @param url 远程路径
+	 * @param config 请求配置
+	 * @return 图片
+	 * @throws IOException 异常
+	 */
+	public static BufferedImage downloadToBufferedImage(String url, RequestConfig config) throws IOException {
+
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		HttpGet httpget = new HttpGet(url);
+		if (config != null) {
+			httpget.setConfig(config);
+		}
+
+		HttpResponse response = httpclient.execute(httpget);
+		HttpEntity entity = response.getEntity();
+
+		try(InputStream inStream = entity.getContent()){
+
+
+			BufferedImage read = ImageIO.read(inStream);
+
+			return read;
+		}finally {
+			httpclient.close();
+		}
+
+	}
+
+	/**
+	 *
 	 * 从远程服务器拷贝到本地文件
-	 * @param url	源文件url地址
-	 * @param path	目标文件
-	 * @return
+	 * @param url    源文件url地址
+	 * @param path    目标文件
+	 * @return 是否成功
+	 * @throws ClientProtocolException 异常
+	 * @throws IOException 异常
 	 */
 	public static boolean download(String url,String path) throws ClientProtocolException, IOException{
 
@@ -107,7 +138,7 @@ public class FileOperationUtil {
 			file.delete();
 		}
 		try(InputStream in = entity.getContent();
-			FileOutputStream fout = new FileOutputStream(file);) {
+			FileOutputStream fout = new FileOutputStream(file)) {
 
 			int l = -1;
 			byte[] tmp = new byte[1024];
@@ -116,17 +147,15 @@ public class FileOperationUtil {
 				// 注意这里如果用OutputStream.write(buff)的话，图片会失真，大家可以试试
 			}
 			fout.flush();
-			fout.close();
-		}finally {
-            httpclient.close();
-        }
+		}
+		httpclient.close();
 		return true;
 	}
 	/**
 	 * 从远程服务器拷贝到本地文件
-	 * @param url	源文件url地址
-	 * @param toFile	目标文件
-	 * @return
+	 * @param url    源文件url地址
+	 * @param toFile    目标文件
+	 * @return 是否成功
 	 */
 	public static boolean fileCopy(URL url,String toFile){
 
@@ -142,16 +171,16 @@ public class FileOperationUtil {
 				return false;
 			}
 			httpUrl.connect();
-			File to_file = new File(toFile);
-			if(!to_file.exists()){
-				to_file.createNewFile();
+			File finalTofile = new File(toFile);
+			if(!finalTofile.exists()){
+				finalTofile.createNewFile();
 			}
 
 
 			bis = new BufferedInputStream(httpUrl.getInputStream());
-			fos = new FileOutputStream(to_file);
+			fos = new FileOutputStream(finalTofile);
 
-			byte buf[] = new byte[1024];
+			byte[] buf = new byte[1024];
 
 			int size = 0;
 			while ((size = bis.read(buf)) != -1) {
@@ -192,28 +221,28 @@ public class FileOperationUtil {
 
 	/**
 	 * 从本地路径拷贝到本地文件
-	 * @param formFile	源文件
-	 * @param toFile	目标文件
-	 * @return
+	 * @param formFile    源文件
+	 * @param toFile    目标文件
+	 * @return 是否成功
 	 */
 	public static boolean fileCopy(String formFile,String toFile){
 
-		File form_file = new File(formFile);
-		File to_file = new File(toFile);
+		File aFormfile = new File(formFile);
+		File aTofile = new File(toFile);
 		FileInputStream fis = null;
 		FileOutputStream fos = null;
 		try {
-			if(!form_file.exists()){
+			if(!aFormfile.exists()){
 				return false;
 			}
-			if(!to_file.exists()){
-				to_file.createNewFile();
+			if(!aTofile.exists()){
+				aTofile.createNewFile();
 			}
 
-			fis = new FileInputStream(form_file);
-			fos = new FileOutputStream(to_file);
+			fis = new FileInputStream(aFormfile);
+			fos = new FileOutputStream(aTofile);
 
-			byte b[] = new byte[10];
+			byte[] b = new byte[10];
 
 			while(fis.read(b)!=-1){
 				fos.write(b);
@@ -236,6 +265,7 @@ public class FileOperationUtil {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				logger.error(e.toString(),e);
 			}
 
 		}
@@ -244,20 +274,21 @@ public class FileOperationUtil {
 	}
 	/**
 	 * 创建目录
-	 * @param destDirName
-	 * @return
+	 * @param destDirName 目录地址
+	 * @return 目录地址
 	 */
 	public static String createDir(String destDirName) {
-		File dir = new File(destDirName);
+		String dirName = destDirName;
+		File dir = new File(dirName);
 		if (dir.exists()) {// 判断目录是否存在
 
-			return destDirName;
+			return dirName;
 		}
-		if (!destDirName.endsWith(File.separator)) {// 结尾是否以"/"结束
-			destDirName = destDirName + File.separator;
+		if (!dirName.endsWith(File.separator)) {// 结尾是否以"/"结束
+			dirName = dirName + File.separator;
 		}
 		if (dir.mkdirs()) {// 创建目标目录
-			return destDirName;
+			return dirName;
 		} else {
 
 			return null;
@@ -265,12 +296,13 @@ public class FileOperationUtil {
 	}
 	/**
 	 * 递归删除文件或目录
-	 * @param path	文件
+	 * @param path    文件
 	 */
 	private static void deleteAllFilesOfDir(File path) {
 
-		if (!path.exists())
+		if (!path.exists()){
 			return;
+		}
 
 		if (path.isFile()) {
 			path.delete();
@@ -285,20 +317,21 @@ public class FileOperationUtil {
 	}
 	/**
 	 * 删除文件或目录
-	 * @param path	路径名
+	 * @param path    路径名
 	 */
 	public static void deleteAllFilesOfDir(String path) {
 
 		File file = new File(path);
-		if (!file.exists())
+		if (!file.exists()){
 			return;
+		}
 		deleteAllFilesOfDir(file);
 	}
 
 	/**
 	 * 文件路径转字节数组
-	 * @param filePath
-	 * @return
+	 * @param filePath 文件路径
+	 * @return 结果
 	 */
 	public static byte[] toByteArray(String filePath){
 		File file = new File(filePath);
@@ -307,8 +340,8 @@ public class FileOperationUtil {
 
 	/**
 	 * 远程URL路径转字节数组
-	 * @param url
-	 * @return
+	 * @param url 远程路径
+	 * @return 数组
 	 */
 	public static byte[] toByteArray(URL url){
 
@@ -323,11 +356,11 @@ public class FileOperationUtil {
 			}
 			httpUrl.connect();
 			bis = new BufferedInputStream(httpUrl.getInputStream());
-			int buf_size = 1024;
-			byte[] buffer = new byte[buf_size];
+			int bufSize = 1024;
+			byte[] buffer = new byte[bufSize];
 			int len = 0;
 
-			while (-1 != (len = bis.read(buffer, 0, buf_size))) {
+			while (-1 != (len = bis.read(buffer, 0, bufSize))) {
 				bos.write(buffer, 0, len);
 			}
 			return bos.toByteArray();
@@ -336,6 +369,7 @@ public class FileOperationUtil {
 		}
 		catch (IOException e){
 			e.printStackTrace();
+			logger.error(e.toString(),e);
 			return null;
 		}finally {
 
@@ -360,8 +394,8 @@ public class FileOperationUtil {
 
 	/**
 	 * 文件转字节数组
-	 * @param file
-	 * @return
+	 * @param file 文件
+	 * @return 数组
 	 */
 	public static byte[] toByteArray(File file){
 
@@ -374,10 +408,10 @@ public class FileOperationUtil {
 		BufferedInputStream in = null;
 		try {
 			in = new BufferedInputStream(new FileInputStream(file));
-			int buf_size = 1024;
-			byte[] buffer = new byte[buf_size];
+			int bufSize = 1024;
+			byte[] buffer = new byte[bufSize];
 			int len = 0;
-			while (-1 != (len = in.read(buffer, 0, buf_size))) {
+			while (-1 != (len = in.read(buffer, 0, bufSize))) {
 				bos.write(buffer, 0, len);
 			}
 			return bos.toByteArray();
@@ -408,9 +442,9 @@ public class FileOperationUtil {
 	/**
 	 * 写入字符串到文件
 	 * @param catalog 目录地址
-	 * @param name	文件名
+	 * @param name    文件名
 	 * @param content  内容
-	 * @return
+	 * @return 是否成功
 	 */
 	public static boolean writeFile(String catalog,String name,String content){
 
@@ -419,10 +453,10 @@ public class FileOperationUtil {
 	/**
 	 * 以指定字符编码写入字符串到文件
 	 * @param catalog 目录地址
-	 * @param name	文件名
+	 * @param name    文件名
 	 * @param content  内容
-	 * @param charset	字符编码
-	 * @return
+	 * @param charset    字符编码
+	 * @return 是否成功
 	 */
 	public static boolean writeFile(String catalog,String name,String content,String charset){
 
@@ -443,7 +477,7 @@ public class FileOperationUtil {
 				file.createNewFile();
 			}
 			fos = new FileOutputStream(file,true);
-			byte byt[] = null;
+			byte[] byt = null;
 			if(charset!=null && !"".equals(charset)){
 				byt = content.getBytes(charset);
 			}
@@ -476,10 +510,10 @@ public class FileOperationUtil {
 	/**
 	 * 以指定字符编码用字符流写入字符串到文件
 	 * @param catalog 目录地址
-	 * @param name	文件名
+	 * @param name    文件名
 	 * @param content  内容
-	 * @param charset	字符编码
-	 * @return
+	 * @param charset    字符编码
+	 * @return 结果
 	 */
 	public static boolean writeFileBuffer(String catalog,String name,String content,String charset){
 
@@ -508,11 +542,14 @@ public class FileOperationUtil {
 			}
 
 			writer.write(content);
+			fos.flush();
+			writer.flush();
 			writer.close();
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			logger.error(e.toString(),e);
 			return false;
 		}finally {
 			try {
@@ -532,9 +569,9 @@ public class FileOperationUtil {
 	/**
 	 * 字节转文件
 	 * @param catalog 目录地址
-	 * @param name	文件名
+	 * @param name    文件名
 	 * @param fileByte  字节
-	 * @return
+	 * @return 是否成功
 	 */
 	public static boolean writeFile(String catalog,String name,byte[] fileByte){
 
@@ -561,6 +598,13 @@ public class FileOperationUtil {
 
 		return flag;
 	}
+
+	/**
+	 *
+	 * @param filePath 文件路径
+	 * @return 结果
+	 * @throws IOException 异常
+	 */
 	public static String readFile(String filePath) throws IOException {
 
 		StringBuffer buffer = new StringBuffer();
@@ -579,3 +623,4 @@ public class FileOperationUtil {
 		return buffer.toString();
 	}
 }
+

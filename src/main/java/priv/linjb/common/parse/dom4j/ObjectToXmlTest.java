@@ -17,6 +17,7 @@ public class ObjectToXmlTest {
 		
 		PicInfo result = new PicInfo();
 		result.setJGSJ("abc");
+		result.setAbcd("main");
 		String xml = xstream.toXML(result);
 		
 		System.out.println(xml);

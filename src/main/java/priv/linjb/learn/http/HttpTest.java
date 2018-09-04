@@ -47,7 +47,9 @@ public class HttpTest {
 	private final static String facePosition = "faceStruct/facePositionBase64.htm";
 
 //	private final static String ip = "http://172.18.10.226:9088/";			//赵鹏依本机
-	private final static String ip = "http://172.18.10.176:9088/";		//识别服务器
+//	private final static String ip = "http://172.18.10.176:9088/";		//识别服务器
+	private final static String ip = "http://172.18.100.123:9088/";		//识别服务器
+
 	public static String transcoding(String str){
 		if(str == null)
 			return null;
@@ -227,7 +229,7 @@ public class HttpTest {
 		String url = ip + facePosition;
 		System.out.println("调用请求： " + url);
 		
-		String base64 = ImageBase64.imageToBase64("e:/SAVE/test/error1.jpg");
+		String base64 = ImageBase64.imageToBase64("E:\\SAVE\\模拟测试\\人脸\\头像\\q1.jpg");
 		JSONObject json = new JSONObject();
 		json.put("bigImg", base64);
 
@@ -250,10 +252,12 @@ public class HttpTest {
 	public static void main(String[] args) {
 		
 		long start = new Date().getTime();
-		
 
-		faceFeature();
-		//facePosition();
+		for (int i = 0; i < 100; i++) {
+			faceFeature();
+
+		}
+//		facePosition();
 
 		//queryUpdateConfig();
 		//updateConfig();
