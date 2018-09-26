@@ -46,9 +46,9 @@ public class HttpTest {
 	
 	private final static String facePosition = "faceStruct/facePositionBase64.htm";
 
-//	private final static String ip = "http://172.18.10.226:9088/";			//赵鹏依本机
+	private final static String ip = "http://172.18.10.19:9088/";			//赵鹏依本机
 //	private final static String ip = "http://172.18.10.176:9088/";		//识别服务器
-	private final static String ip = "http://172.18.100.123:9088/";		//识别服务器
+//	private final static String ip = "http://172.18.100.123:9088/";		//识别服务器
 
 	public static String transcoding(String str){
 		if(str == null)
@@ -196,7 +196,8 @@ public class HttpTest {
 		System.out.println("调用请求： " + url);
 		String key = "e9143fbd4e9b5fe493dd7be4b762d056";
 		String facePosition = "0,0,416,232";
-		String base64 = ImageBase64.imageToBase64("E:\\SAVE\\模拟测试\\人脸\\过人记录\\008坐标&0,0,416,232.jpg");
+//		String base64 = ImageBase64.imageToBase64("E:\\SAVE\\模拟测试\\人脸\\过人记录\\008坐标&0,0,416,232.jpg");
+		String base64 = ImageBase64.imageToBase64("E:\\SAVE\\模拟测试\\人脸\\18w全国在逃库~\\qgzt0816\\part8\\part9\\542121\\198412\\1___542121198412070031_欧布__5403020000002018051023.jpg");
 		JSONObject json = new JSONObject();
 		json.put("facePosition", facePosition);
 		json.put("bigImg", base64);
@@ -251,12 +252,12 @@ public class HttpTest {
 	
 	public static void main(String[] args) {
 		
-		long start = new Date().getTime();
+		long start = System.currentTimeMillis();
 
-		for (int i = 0; i < 100; i++) {
+//		for (int i = 0; i < 100; i++) {
 			faceFeature();
 
-		}
+//		}
 //		facePosition();
 
 		//queryUpdateConfig();
@@ -266,7 +267,7 @@ public class HttpTest {
 		//recognitionOneToMany();
 		
 		
-		long end = new Date().getTime();
+		long end = System.currentTimeMillis();
 		double seconds = new BigDecimal(end - start ).divide(new BigDecimal(1000)).doubleValue();
 		System.out.println("调用时间："+seconds+"秒");
 		
