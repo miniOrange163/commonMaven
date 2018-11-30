@@ -33,7 +33,7 @@ public class Xstream {
 			Info info = list.get(i);
 			System.out.println(info.toString());
 		}
-	
+
 	}
 	public static void init(){
 		//初始化xml文本

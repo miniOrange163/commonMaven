@@ -12,20 +12,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 /**
  * 文件操作工具类
@@ -41,12 +31,14 @@ import java.net.URL;
  * 8.    writeFile(String catalog,String name,String content)                        写入字符串到文件
  * 9.    writeFile(String catalog,String name,String content,String charset)            以指定字符编码写入字符串到文件
  * 10.    writeFileBuffer(String catalog,String name,String content,String charset)    以指定字符编码用字符流写入字符串到文件
- * 11.    writeFile(String catalog,String name,byte[] fileByte)                    字节转文件
- * 12.  download(String url,String path)                                            从网络地址的url下载文件到指定路径
- * 13.  downloadToByte(String url)                                                    从网络地址的url下载文件转到byte
- * 14.    downloadToBufferedImage(String url,RequestConfig config)                    从网络地址的url下载文件转到BufferedImage
- * 15.    readFile(String filePath)                                                    读取文本文件内容
- *
+ * 11.    writeFileBuffer(String catalog, String name, List<String> content, String charset) 以指定字符编码用字符流写入[字符串数组]到文件
+ * 12.    writeFile(String catalog,String name,byte[] fileByte)                    字节转文件
+ * 13.    download(String url,String path)                                            从网络地址的url下载文件到指定路径
+ * 14.    downloadToByte(String url)                                                    从网络地址的url下载文件转到byte
+ * 15.    downloadToBufferedImage(String url,RequestConfig config)                    从网络地址的url下载文件转到BufferedImage
+ * 16.    readFile(String filePath)                                                    读取文本文件内容
+ * 17.    readFile(String filePath,String charset)                                    读取文本文件内容
+ * 18.    isExist(String urlStr)                                                      检测当前URL是否可连接或是否有效,
  */
 public final class FileOperationUtil {
 
@@ -567,6 +559,69 @@ public final class FileOperationUtil {
 		return true;
 	}
 	/**
+	 * 以指定字符编码用字符流写入字符串到文件
+	 * @param catalog 目录地址
+	 * @param name    文件名
+	 * @param content  内容数组
+	 * @param charset    字符编码
+	 * @return 结果
+	 */
+	public static boolean writeFileBuffer(String catalog, String name, List<String> content, String charset){
+
+		//创建目录
+		FileOperationUtil.createDir(catalog);
+
+		File file = new File(catalog + File.separator + name);
+
+		FileOutputStream fos = null;
+		BufferedWriter writer = null;
+		try {
+
+			if(!file.exists()){
+				file.createNewFile();
+			}
+			else{
+				file.delete();
+				file.createNewFile();
+			}
+			fos = new FileOutputStream(file,true);
+			if(charset!=null && !"".equals(charset)){
+				writer = new BufferedWriter(new OutputStreamWriter(fos, charset));
+			}
+			else{
+				writer = new BufferedWriter(new OutputStreamWriter(fos));
+			}
+
+			for (String text : content) {
+				writer.write(text);
+				writer.newLine();
+
+			}
+			fos.flush();
+			writer.flush();
+			writer.close();
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error(e.toString(),e);
+			return false;
+		}finally {
+			try {
+				if(fos!=null){
+					fos.close();
+				}
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				logger.error(e.toString(),e);
+
+			}
+		}
+		return true;
+	}
+	/**
 	 * 字节转文件
 	 * @param catalog 目录地址
 	 * @param name    文件名
@@ -612,15 +667,78 @@ public final class FileOperationUtil {
 		if(!file.exists()){
 			return null;
 		}
-		BufferedReader bufr = null;
+		try(BufferedReader bufr = new BufferedReader(new FileReader(file));
+		){
 
-		bufr = new BufferedReader(new FileReader(file));
-		String line =null;
-		while((line = bufr.readLine())!=null){
-			buffer.append(line);
+			String line =null;
+			while((line = bufr.readLine())!=null){
+				buffer.append(line);
+			}
+		}
+		return buffer.toString();
+	}
+
+	/**
+	 *
+	 * @param filePath 文件路径
+	 * @param charset 编码
+	 * @return 结果
+	 * @throws IOException 异常
+	 */
+	public static String readFile(String filePath,String charset) throws IOException {
+
+		StringBuffer buffer = new StringBuffer();
+		File file = new File(filePath);
+		if(!file.exists()){
+			return null;
+		}
+		try(InputStreamReader isr = new InputStreamReader(new FileInputStream(file), charset);
+			BufferedReader bufr = new BufferedReader(isr);) {
+
+			String line =null;
+			while((line = bufr.readLine())!=null){
+				buffer.append(line);
+			}
+
+		}
+		return buffer.toString();
+	}
+
+	/**
+	 * 功能：检测当前URL是否可连接或是否有效,
+	 * 描述：最多连接网络 2 次, 如果 2 次都不成功，视为该地址不可用
+	 * @param urlStr 指定URL网络地址
+	 * @return URL
+	 */
+	public static synchronized boolean isExist(String urlStr) throws Exception {
+		if (urlStr == null || urlStr.length() <= 0) {
+			return false;
+		}
+		int counts = 0;
+		URL url = null;
+		HttpURLConnection con = null;
+		int state = -1;
+		boolean flag = false;
+		while (counts < 2) {
+			try {
+				url = new URL(urlStr);
+				con = (HttpURLConnection) url.openConnection();
+				con.setConnectTimeout(2000);
+				con.setReadTimeout(5000);
+				state = con.getResponseCode();
+				if (state == 200) {
+					flag = true;
+					return flag;
+				}
+			}finally {
+				counts ++;
+				if (con != null) {
+					con.disconnect();
+				}
+			}
 		}
 
-		return buffer.toString();
+		return flag;
 	}
 }
 
