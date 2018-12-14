@@ -17,7 +17,7 @@ public class JsonUtils {
 	 * @param object
 	 * @return
 	 */
-	public static String ConvertToString(Object object)
+	public static String convertToString(Object object)
 	{
 		ObjectMapper mapper = new ObjectMapper(); 
 		mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
@@ -32,7 +32,7 @@ public class JsonUtils {
 		return json;
 	}
 	
-	public static <T> T ConvertToObject (String json,Class<T> classT)
+	public static <T> T convertToObject(String json, Class<T> classT)
 	{
 		ObjectMapper mapper = new ObjectMapper();  
 		mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
@@ -47,7 +47,7 @@ public class JsonUtils {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <T> T ConvertToObject (String json,TypeReference valueTypeRef)
+	public static <T> T convertToObject(String json, TypeReference valueTypeRef)
 	{
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));

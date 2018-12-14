@@ -7,26 +7,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.logging.SimpleFormatter;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.StringUtils;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import priv.linjb.common.util.base64.ImageBase64;
 import priv.linjb.common.util.encrypt.EncryptUtils;
-import priv.linjb.common.util.encrypt.MD5Encryption;
-import priv.linjb.common.util.http.HttpUtils;
+import priv.linjb.common.util.http.HttpPrivateUtils;
 import priv.linjb.common.util.json.JsonUtils;
-import priv.linjb.common.util.number.MathExtend;
 
 public class HttpTest {
 
@@ -69,13 +58,13 @@ public class HttpTest {
 		JSONObject json = new JSONObject();
 		json.put("rspc_rsrvid", "111");
 
-		String result = HttpUtils.postJsonObject(url, json);
+		String result = HttpPrivateUtils.postJsonObject(url, json);
 
 	
 		result = transcoding(result);
 		System.out.println("返回结果: " + result);
 		
-		JSONObject response = JsonUtils.ConvertToObject(result, JSONObject.class);
+		JSONObject response = JsonUtils.convertToObject(result, JSONObject.class);
 		String data = response.getString("data");
 		System.out.println(data);
 		
@@ -93,8 +82,8 @@ public class HttpTest {
 		String xml = readFile();
 		xml = xml+"\r\n";
 		json.put("rspc_config_content", xml);
-		System.out.println(JsonUtils.ConvertToString(json));
-		String result = HttpUtils.postJsonObject(url, json);
+		System.out.println(JsonUtils.convertToString(json));
+		String result = HttpPrivateUtils.postJsonObject(url, json);
 
 	
 		System.out.println("返回结果: " + transcoding(result));
@@ -107,8 +96,8 @@ public class HttpTest {
 		String base64 = ImageBase64.imageToBase64("e:/SAVE/test/1.jpg");
 		json.put("imgbase64", base64);
 		json.put("ext", "jpg");
-		//System.out.println("入参: " + JsonUtils.ConvertToString(json));
-		String result = HttpUtils.postJsonObject(url, json);
+		//System.out.println("入参: " + JsonUtils.convertToString(json));
+		String result = HttpPrivateUtils.postJsonObject(url, json);
 		System.out.println("返回结果: " + transcoding(result));
 	}
 	public static void recognitionOneToOne(){
@@ -130,7 +119,7 @@ public class HttpTest {
 		array.add(json1);
 		array.add(json2);
 		System.out.println("入参：" + array.toString());
-		String result = HttpUtils.postJsonObject(url, array);
+		String result = HttpPrivateUtils.postJsonObject(url, array);
 		System.out.println("返回结果: " + transcoding(result));
 	}
 	public static void recognitionOneToMany(){
@@ -145,7 +134,7 @@ public class HttpTest {
 		json.put("ext", "jpg");
 		json.put("ostridList", list);
 
-		String result = HttpUtils.postJsonObject(url, json);
+		String result = HttpPrivateUtils.postJsonObject(url, json);
 		System.out.println("返回结果: " + transcoding(result));
 	}
 	
@@ -203,13 +192,13 @@ public class HttpTest {
 		json.put("bigImg", base64);
 		json.put("autoKey",EncryptUtils.md5(key + facePosition));
 		System.out.println("autoKey:" + json.getString("autoKey"));
-		String result = HttpUtils.postJsonObject(url, json);
+		String result = HttpPrivateUtils.postJsonObject(url, json);
 
 	
 		result = transcoding(result);
 		System.out.println("返回结果: " + result);
 		
-		JSONObject response = JsonUtils.ConvertToObject(result, JSONObject.class);
+		JSONObject response = JsonUtils.convertToObject(result, JSONObject.class);
 		String data = response.getString("data");
 		System.out.println(data);
 
@@ -234,13 +223,13 @@ public class HttpTest {
 		JSONObject json = new JSONObject();
 		json.put("bigImg", base64);
 
-		String result = HttpUtils.postJsonObject(url, json);
+		String result = HttpPrivateUtils.postJsonObject(url, json);
 
 	
 		result = transcoding(result);
 		System.out.println("返回结果: " + result);
 		
-		JSONObject response = JsonUtils.ConvertToObject(result, JSONObject.class);
+		JSONObject response = JsonUtils.convertToObject(result, JSONObject.class);
 		String data = response.getString("data");
 		System.out.println(data);
 		

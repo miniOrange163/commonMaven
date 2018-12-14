@@ -10,7 +10,7 @@ public class jsonTest {
 		String result = "{\"errorcode\":\"0\",\"message\":\"执行成功\",\"data\":{\"verifyResult\":\"1\",\"facepos\":\"\",\"smallImages\":[{}]}}";
 	
 		
-		JSONObject repsonse = JsonUtils.ConvertToObject(result, JSONObject.class);
+		JSONObject repsonse = JsonUtils.convertToObject(result, JSONObject.class);
 		
 		String errorcode = (String) repsonse.get("errorcode");
 		if(errorcode != null && "0".equals(errorcode)){

@@ -52,7 +52,7 @@ public class EasyExcelTest {
         private String carno;
         @ExcelProperty(index = 1)
         private String color;
-        @ExcelProperty(index = 2)
+        @ExcelProperty(value = "车辆品牌",index = 4)
         private Integer sum;
 
         public ImportInfo(String carno, String color, Integer sum) {

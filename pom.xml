@@ -103,12 +103,17 @@
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 			<version>4.5.2</version>
-		</dependency>
-		<dependency>
-		    <groupId>com.github.redfish4ktc.soapui</groupId>
-		    <artifactId>soapui</artifactId>
-		    <version>4.0.1.0</version>
-		</dependency>
+	</dependency>
+	  <dependency>
+		  <groupId>org.apache.httpcomponents</groupId>
+		  <artifactId>httpmime</artifactId>
+		  <version>4.5.2</version>
+	  </dependency>
+	<dependency>
+		<groupId>com.github.redfish4ktc.soapui</groupId>
+		<artifactId>soapui</artifactId>
+		<version>4.0.1.0</version>
+	</dependency>
 		
 	<!-- ftp -->
 	<dependency>
