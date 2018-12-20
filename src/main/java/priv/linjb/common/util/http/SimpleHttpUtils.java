@@ -1,15 +1,9 @@
 package priv.linjb.common.util.http;
 
-import org.apache.commons.collections.map.HashedMap;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.NameValuePair;
-import org.apache.http.ParseException;
-import org.apache.http.client.ClientProtocolException;
+import org.apache.http.*;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.*;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
@@ -26,10 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author: 林嘉宝
@@ -50,7 +41,7 @@ public class SimpleHttpUtils {
      * @return 结果
      */
     public static String post(String url){
-        return postCustomizeEntity(url,null,null,null,"utf-8");
+        return postHttpRequest(url,null,null,null,"utf-8");
     }
 
     /**
@@ -113,7 +104,7 @@ public class SimpleHttpUtils {
             }
             headers.add(defaultHeader("application/x-www-form-urlencoded"));
 
-            body = postCustomizeEntity(url,new InputStreamEntity(inputStream),headers,requestConfig,encoding);
+            body = postHttpRequest(url,new InputStreamEntity(inputStream),headers,requestConfig,encoding);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -146,7 +137,7 @@ public class SimpleHttpUtils {
         try {
 
             UrlEncodedFormEntity httpEntity = new UrlEncodedFormEntity(nvps, encoding);
-            body = postCustomizeEntity(url,httpEntity,headers,requestConfig,encoding);
+            body = postHttpRequest(url,httpEntity,headers,requestConfig,encoding);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -176,7 +167,7 @@ public class SimpleHttpUtils {
         HttpEntity httpEntity = multipartEntityBuilder.build();
         String encoding = "utf-8";
 
-        body = postCustomizeEntity(url,httpEntity,headers,requestConfig,encoding);
+        body = postHttpRequest(url,httpEntity,headers,requestConfig,encoding);
 
         return body;
 
@@ -197,14 +188,129 @@ public class SimpleHttpUtils {
 
         HttpEntity requestEntity = new StringEntity(data, ContentType.create(contentType, encoding));
 
-        body = postCustomizeEntity(url,requestEntity,headers,requestConfig,encoding);
+        body = postHttpRequest(url,requestEntity,headers,requestConfig,encoding);
 
         return body;
 
     }
 
-    public static String postCustomizeEntity(String url, HttpEntity httpEntity,
-                                             List<Header> headers,RequestConfig requestConfig,String encoding) {
+    /**
+     * post形式发送http请求
+     * @param url   请求地址
+     * @param httpEntity    请求实体
+     * @param headers       请求头
+     * @param requestConfig 请求配置
+     * @param encoding      编码
+     * @return  响应字符串
+     */
+    public static String postHttpRequest(String url, HttpEntity httpEntity,
+                                         List<Header> headers, RequestConfig requestConfig, String encoding) {
+
+        String body = null;
+        try {
+
+            //创建post方式请求对象
+            HttpPost http = new HttpPost(url);
+            //设置参数到请求对象中
+            http.setEntity(httpEntity);
+
+            body = baseHttpRequest(http,url,headers,requestConfig,encoding);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.toString(),e);
+        }
+
+        return body;
+
+    }
+    /**
+     * delete形式发送http请求
+     * @param url   请求地址
+     * @param headers       请求头
+     * @param requestConfig 请求配置
+     * @param encoding      编码
+     * @return  响应字符串
+     */
+    public static String deleteHttpRequest(String url, List<Header> headers, RequestConfig requestConfig, String encoding) {
+
+        String body = null;
+        try {
+
+            //创建post方式请求对象
+            HttpDelete http = new HttpDelete(url);
+
+            body = baseHttpRequest(http,url,headers,requestConfig,encoding);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.toString(),e);
+        }
+
+        return body;
+
+    }
+    /**
+     * put形式发送http请求
+     * @param url   请求地址
+     * @param httpEntity    请求实体
+     * @param headers       请求头
+     * @param requestConfig 请求配置
+     * @param encoding      编码
+     * @return  响应字符串
+     */
+    public static String putHttpRequest(String url, HttpEntity httpEntity,List<Header> headers,
+                                        RequestConfig requestConfig, String encoding) {
+
+        String body = null;
+        try {
+
+            //创建post方式请求对象
+            HttpPut http = new HttpPut(url);
+            //设置参数到请求对象中
+            http.setEntity(httpEntity);
+
+            body = baseHttpRequest(http,url,headers,requestConfig,encoding);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.toString(),e);
+        }
+
+        return body;
+
+    }
+    /**
+     * get形式发送http请求
+     * @param url   请求地址
+     * @param httpEntity    请求实体
+     * @param headers       请求头
+     * @param requestConfig 请求配置
+     * @param encoding      编码
+     * @return  响应字符串
+     */
+    public static String getHttpRequest(String url, HttpEntity httpEntity,List<Header> headers,
+                                        RequestConfig requestConfig, String encoding) {
+
+        String body = null;
+        try {
+
+            //创建post方式请求对象
+            HttpGet http = new HttpGet(url);
+
+            body = baseHttpRequest(http,url,headers,requestConfig,encoding);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.toString(),e);
+        }
+
+        return body;
+
+    }
+
+    private static String baseHttpRequest(HttpRequestBase http , String url, List<Header> headers,
+                                         RequestConfig requestConfig, String encoding) {
 
         String body = null;
         CloseableHttpClient httpClient = null;
@@ -213,24 +319,20 @@ public class SimpleHttpUtils {
 
             //创建httpclient对象
             httpClient = HttpClients.createDefault();
-            //创建post方式请求对象
-            HttpPost httpPost = new HttpPost(url);
 
-            //设置参数到请求对象中
-            httpPost.setEntity(httpEntity);
             //设置header信息
             //指定报文头【Content-type】
             if (headers != null) {
                 for (Header header : headers) {
-                    httpPost.setHeader(header);
+                    http.setHeader(header);
                 }
             }
             if (requestConfig == null) {
                 requestConfig = defaultRequestConfig();
             }
-            httpPost.setConfig(requestConfig);
+            http.setConfig(requestConfig);
             //执行请求操作，并拿到结果（同步阻塞）
-            response = httpClient.execute(httpPost);
+            response = httpClient.execute(http);
             //获取结果实体
             HttpEntity entity = response.getEntity();
             if (entity != null) {
