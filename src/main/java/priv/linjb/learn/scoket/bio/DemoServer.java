@@ -1,17 +1,11 @@
-package priv.linjb.learn.scoket;
+package priv.linjb.learn.scoket.bio;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Scanner;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * @author: 林嘉宝
@@ -27,19 +21,22 @@ public class DemoServer extends Thread {
     private ServerSocket serverSocket;
 
     public static void main(String[] args) {
+        // 启动服务端
         DemoServer demoServer = new DemoServer();
         demoServer.start();
 
         long start = System.currentTimeMillis();
+        // 循环创建多个客户端进行连接
+        for (int i = 0; i < 1; i++) {
+            try (Socket client = new Socket(InetAddress.getLocalHost(), demoServer.getPort());
+                 BufferedWriter out = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));) {
 
-        for (int i = 0; i < 8000; i++) {
-            try (Socket client = new Socket(InetAddress.getLocalHost(), demoServer.getPort())) {
-
-                BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                out.write("this is client");
+                out.flush();
+                client.shutdownOutput();
                 reader.lines().forEach(s-> System.out.println(s));
-
                 reader.close();
-
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -61,13 +58,14 @@ public class DemoServer extends Thread {
     public void run(){
 
         try {
-            serverSocket = new ServerSocket(0);
+            serverSocket = new ServerSocket(8123);
 //            ExecutorService executorService = Executors.newFixedThreadPool(50);
             while (true) {
                 Socket socket = serverSocket.accept();
                 RequestHandler requestHandler = new RequestHandler(socket);
-//                executorService.execute(requestHandler);
                 requestHandler.start();
+
+//                executorService.execute(requestHandler);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -91,13 +89,23 @@ public class DemoServer extends Thread {
         }
 
         public void run(){
-            try (PrintWriter out = new PrintWriter(socket.getOutputStream())) {
+            System.out.println(123);
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                 BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                ) {
 
-                out.print("hello world!");
+                String info =null;
+                while((info=br.readLine())!=null){
+                    System.out.println("我是服务器，客户端说："+info);
+                }
+
+                out.write("hello world!");
                 out.flush();
+                socket.shutdownOutput();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
         }
 
     }
