@@ -20,31 +20,31 @@ public class JarToolUtil
 {
 
 
-
-
     /**
-     * 获取jar绝对路径
+     * 获取jar包绝对路径，包含jar包的文件名
      *
      * @return
      */
     public static String getJarPath()
     {
         File file = getFile();
-        if (file == null)
+        if (file == null) {
             return null;
+        }
         return file.getAbsolutePath();
     }
 
     /**
-     * 获取jar目录
+     * 获取jar包所在目录
      *
      * @return
      */
     public static String getJarDir()
     {
         File file = getFile();
-        if (file == null)
+        if (file == null) {
             return null;
+        }
         return getFile().getParent();
     }
 
@@ -56,8 +56,9 @@ public class JarToolUtil
     public static String getJarName()
     {
         File file = getFile();
-        if (file == null)
+        if (file == null) {
             return null;
+        }
         return getFile().getName();
     }
 
@@ -76,6 +77,7 @@ public class JarToolUtil
         }
         catch (java.io.UnsupportedEncodingException e)
         {
+            e.printStackTrace();
             return null;
         }
         return new File(path);
