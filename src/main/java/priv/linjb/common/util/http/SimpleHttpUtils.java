@@ -8,7 +8,10 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.ContentBody;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
@@ -16,8 +19,10 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import priv.linjb.common.util.file.FileOperationUtil;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -158,7 +163,6 @@ public class SimpleHttpUtils {
         if (headers == null) {
             headers = new ArrayList<>();
         }
-        headers.add(defaultHeader("multipart/form-data"));
 
         MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
         for (Map.Entry<String, ContentBody> param : map.entrySet()) {
