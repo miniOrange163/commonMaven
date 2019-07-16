@@ -30,7 +30,8 @@ public class Poi_xlsx {
             inStream = new FileInputStream(new File(filePath));
             //XSSFWorkbook workBook = (XSSFWorkbook) WorkbookFactory.create(inStream);
             XSSFWorkbook workBook = new XSSFWorkbook(inStream);	
-            sheet = workBook.getSheetAt(0);         
+            sheet = workBook.getSheetAt(0);
+
         } catch (Exception e) {
             e.printStackTrace();
         }finally{

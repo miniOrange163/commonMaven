@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ListUtil {
 
-	public static List getUserList(){
+	public static List<User> getUserList(){
 		
 		User u1 = new User("lilei",20,1);
 		User u2 = new User("limei",31,1);

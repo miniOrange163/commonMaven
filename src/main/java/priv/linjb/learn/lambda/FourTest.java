@@ -40,6 +40,17 @@ public class FourTest {
 		System.out.println(sum);
 	}
 
+	/**
+	 * 字符串拼接
+	 */
+	@Test
+	public void string(){
+		List<User> userList = ListUtil.getUserList();
+
+//		userList.stream().map(o->o.getName()).collect(new StringCollector())
+
+	}
+
 
 	public static void main(String[] args) {
 		

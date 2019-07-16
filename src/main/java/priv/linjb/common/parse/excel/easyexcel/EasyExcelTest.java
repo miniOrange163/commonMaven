@@ -1,4 +1,4 @@
-package priv.linjb.common.parse.excel;
+package priv.linjb.common.parse.excel.easyexcel;
 
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.annotation.ExcelProperty;
