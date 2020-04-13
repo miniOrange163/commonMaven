@@ -1,6 +1,8 @@
 package priv.linjb.learn.date;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,10 +22,47 @@ import java.util.Date;
  */
 public class TestLocalDateTime {
 
+    private static Logger logger = LoggerFactory.getLogger(TestLocalDateTime.class);
 
-        public static DateTimeFormatter formatYYYYMMDDHHMMSS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public static DateTimeFormatter formatYYYYMMDDHHMMSS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static DateTimeFormatter formatYYYYMMDDHHMMSSSSS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+
+
+    private static DateTimeFormatter YYYYMMDD = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static DateTimeFormatter YYYYMMDDHHMMSS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    /**
+     * 输入时间格式的字符串，输出LocalDateTime
+     * 只支持以下几种格式：
+     * 1、2018-10-19T23:01:10Z
+     * 2、2018-10-19
+     * 3、2018-10-19 23:01:10
+     * @param time
+     * @return
+     */
+    public static LocalDateTime formatLocalDateTime(String time){
+        LocalDateTime localDateTime = null;
+        try {
+            if (time.indexOf("T") > 0 && time.indexOf("Z") > 0 ) {
+                // 如果是国际标准时间格式，则统一以格林威治时区作为解析依据
+                localDateTime = LocalDateTime.ofInstant(Instant.parse(time), ZoneId.of("GMT"));
+            }
+            else{
+                // 仅通过长度判断，快速
+                if (time.length() == 10) {
+                    LocalDate localDate = LocalDate.parse(time,YYYYMMDD);
+                    localDateTime = LocalDateTime.of(localDate, LocalTime.of(0, 0, 0));
+                } else if (time.length() == 19) {
+                    localDateTime = LocalDateTime.parse(time, YYYYMMDDHHMMSS);
+                }
+            }
+        } catch (Exception e) {
+            logger.error(e.toString()+",time:{}",time);
+        }
+
+
+        return localDateTime;
+    }
 
     /**
      * 日期转String
@@ -36,6 +75,20 @@ public class TestLocalDateTime {
         System.out.println("yyyy-MM-dd HH:mm:ss.SSS---->" + now.format(formatYYYYMMDDHHMMSSSSS));
 
     }
+
+    public static void main(String[] args) {
+
+        // LocalDate 转 LocalDateTime
+        LocalDateTime localDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(0,0,0));
+        System.out.println(localDateTime);
+
+        System.out.println(ZoneId.systemDefault());
+        LocalDateTime localDateTime1 = LocalDateTime.ofInstant(Instant.now(), ZoneId.systemDefault());
+
+        System.out.println(localDateTime1);
+    }
+
+
 
     /**
      * String转日期
@@ -76,7 +129,7 @@ public class TestLocalDateTime {
     }
 
     /**
-     * 获取当前毫秒值
+     * 获取当前秒值
      */
     @Test
     public void getTimeInMillis(){
@@ -87,8 +140,13 @@ public class TestLocalDateTime {
 
         //java1.8
         System.out.println(Clock.systemDefaultZone().millis());
+
         //使用localDateTime获取当前毫秒值
         System.out.println(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        // 获取当前秒数
+        System.out.println(LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8")));
+        // 获取当前毫秒数
+        System.out.println(LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli());
     }
 
     /**
