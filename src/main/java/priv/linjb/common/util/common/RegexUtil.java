@@ -20,6 +20,11 @@ public class RegexUtil {
     public final static Pattern numHeadPattern = Pattern.compile("^\\d+.*");
     // 判断文件扩展名是否属于图片
     public final static Pattern picTailPattern = Pattern.compile("^.*[.](png|gif|jpg|jpeg|bmp|tif|psd|ICO)$");
+    // 判断文件扩展名是否属于视频
+    public final static Pattern videoTailPattern = Pattern.compile("^.*[.](rm|rmvb|avi|wmv|asf|dat|3gp|mp4|mpeg)$");
+    // 判断文件扩展名是否属于音频
+    public final static Pattern audioTailPattern = Pattern.compile("^.*[.](mp3|wave|wma|m4a|wav|mpc|pcm|ogg|ra|ape)$");
+
     // 判断文件夹名称是否包含非法字符
     public final static Pattern folderPattern = Pattern.compile("((?![\\\\]|[:]|[*]|[?]|[\"]|[<]|[>]|[|]).)*");
 
