@@ -26,7 +26,7 @@
     <dependency> 
 			<groupId>org.apache.ant</groupId> 
 			<artifactId>ant</artifactId> 
-			<version>1.9.7</version> 
+			<version>1.9.15</version> 
 	</dependency>
   	<!-- cglib包		用于动态生成对象 -->
   	<dependency>
